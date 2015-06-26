@@ -65,7 +65,7 @@ namespace Microsoft.Practices.IoTJourney.Tests.Common
                 {
                     while (!ct.IsCancellationRequested)
                     {
-                        var keyChar = await GetKeyCharAsync(ct);
+                        var keyChar = await GetKeyCharAsync(ct);//.ConfigureAwait(false);
                         if (keyChar != 'q' && keyChar != 'Q')
                             continue;
 
@@ -83,7 +83,7 @@ namespace Microsoft.Practices.IoTJourney.Tests.Common
 
                 var simulatorTask = selection.Value(ct);
 
-                await Task.WhenAny(consoleTask, simulatorTask);
+                await Task.WhenAny(consoleTask, simulatorTask);//.ConfigureAwait(false);
 
                 tokenSource.Cancel();
                 ReportTaskStatus(simulatorTask);

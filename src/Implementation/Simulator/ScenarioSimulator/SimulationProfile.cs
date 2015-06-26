@@ -84,7 +84,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
                     simulationTasks.Add(deviceTask);
                 }
 
-                await Task.WhenAll(simulationTasks.ToArray());
+                await Task.WhenAll(simulationTasks.ToArray());//.ConfigureAwait(false);
 
                 _observableTotalCount.OnCompleted();
             }
@@ -112,12 +112,14 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
 
             try
             {
-                await Task.Delay(waitBeforeStarting, token);
+                await Task.Delay(waitBeforeStarting, token).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
                 return;
             }
+
+
 
             var messagingEntries = produceEventsForScenario();
             var device = new Device(deviceId, messagingEntries, sendEventsAsync);
@@ -129,7 +131,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
             device.ObservableEventCount
                 .Subscribe(totalCount.OnNext);
 
-            await device.RunSimulationAsync(token);
+            await device.RunSimulationAsync(token);//.ConfigureAwait(false);
         }
     }
 }
