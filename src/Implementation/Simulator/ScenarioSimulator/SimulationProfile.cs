@@ -107,7 +107,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
         private static async Task SimulateDeviceAsync(
             string deviceId,
             Func<EventEntry[]> produceEventsForScenario,
-            Func<object, string, int, Task<bool>> sendEventsAsync,
+            Func<object, Task<bool>> sendEventsAsync,
             TimeSpan waitBeforeStarting,
             IObserver<int> totalCount,
             CancellationToken token)
@@ -116,7 +116,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
 
             try
             {
-                await Task.Delay(waitBeforeStarting, token);
+                await Task.Delay(waitBeforeStarting, token).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {

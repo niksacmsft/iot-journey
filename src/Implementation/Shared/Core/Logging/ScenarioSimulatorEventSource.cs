@@ -166,6 +166,19 @@ namespace Microsoft.Practices.IoTJourney.Logging
             WriteEvent(19, deviceId, eventCount);
         }
 
+        [Event(20, Level = EventLevel.Verbose)]
+        public void EventSentMeasurement(string deviceId,double timesincelastmsg,  int count)
+        {
+            WriteEvent(20, deviceId, timesincelastmsg, count);
+        }
+
+        [Event(21, Level = EventLevel.Verbose)]
+        public void Logging(string deviceId, int count, string msg)
+        {
+            WriteEvent(21, deviceId, count, msg);
+        }
+
+
 
     }
 }

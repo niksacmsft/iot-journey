@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.SemanticLogging;
+using Microsoft.Practices.EnterpriseLibrary.SemanticLogging.Formatters;
 using Microsoft.Practices.IoTJourney.Logging;
 
 namespace Microsoft.Practices.IoTJourney.ScenarioSimulator.ConsoleHost
@@ -29,6 +30,9 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator.ConsoleHost
 
             observableEventListener.EnableEvents(ScenarioSimulatorEventSource.Log, configuration.EventLevel);
 
+            JsonEventTextFormatter formatter = new JsonEventTextFormatter(EventTextFormatting.Indented);
+
+            formatter.IncludeEntrySeparator = true;
             observableEventListener.LogToConsole();
             observableEventListener.LogToFlatFile("analysis-iot.log");
 

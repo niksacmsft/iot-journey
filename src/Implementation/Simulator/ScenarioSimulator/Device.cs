@@ -10,6 +10,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.IoTJourney.Logging;
 
+using System.IO;
+using System.Text;
+
 namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
 {
     public class Device
@@ -21,7 +24,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
         private readonly IEnumerable<EventEntry> _eventEntries;
 
         //LAB Debug added string, int
-        private readonly Func<object, string, int, Task<bool>> _sendEventAsync;
+        private readonly Func<object, Task<bool>> _sendEventAsync;
 
         public ISubject<int> ObservableEventCount { get; private set; }
 
@@ -32,7 +35,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
         public Device(
             string deviceId,
             IEnumerable<EventEntry> eventEntries,
-            Func<object, string, int, Task<bool>> sendEventAsync)
+            Func<object, Task<bool>> sendEventAsync)
         {
             _deviceId = deviceId;
             _sendEventAsync = sendEventAsync;
@@ -50,30 +53,43 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
 
             // LAB debug added count
             int event_count = 0;
+            double timesincelastmsg = 0;
+
+            StringBuilder sb = new StringBuilder();
+
 
             try
             {
                 while (!token.IsCancellationRequested)
                 {
                     var elaspedTime = stopwatch.Elapsed;
+                    //ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count, "Start of Loop - stopwatch.elaspedTime ="+elaspedTime);
                     stopwatch.Restart();
 
                     foreach (var entry in _eventEntries)
                     {
                         entry.UpdateElapsedTime(elaspedTime);
+                        //ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count, "Updated - Entry.elaspedTime =" + entry.ElapsedTime);
                         if (!entry.ShouldSendEvent())
                         {
+                            //ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count,"Not enough time - Entry.elaspedTime ="+entry.ElapsedTime);
                             continue;
                         }
+
+                        timesincelastmsg = entry.ElapsedTime.TotalMilliseconds;
                         entry.ResetElapsedTime();
 
                         var evt = entry.CreateNewEvent(this);
-                        var wasEventSent = await _sendEventAsync(evt,_deviceId,event_count);
+                        var wasEventSent = await _sendEventAsync(evt);
 
                         if (wasEventSent)
                         {
                             ObservableEventCount.OnNext(1);
                             //debug
+
+                            ScenarioSimulatorEventSource.Log.EventSentMeasurement(_deviceId, timesincelastmsg,  event_count);
+                            sb.AppendLine(timesincelastmsg.ToString());
+
                             event_count++;
                         }
                         else
@@ -86,17 +102,23 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
                             // the next one.
                             try
                             {
+                                ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count, "awaiting Simulation delay for 10 Seconds");
                                 await Task.Delay(TimeSpan.FromSeconds(10), token);
                             }
                             catch (TaskCanceledException) { /* cancelling Task.Delay will throw */ }
                         }
                     }
 
-                    try
-                    {
-                        await Task.Delay(LoopFrequency, token);
-                    }
-                    catch (TaskCanceledException) { /* cancelling Task.Delay will throw */ }
+                    //try
+                    //{
+                    //    //ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count, "awaiting Delay with LoopFreq = " + LoopFrequency);
+                    //    await Task.Delay(LoopFrequency, token);
+                    //}
+                    //catch (TaskCanceledException) { /* cancelling Task.Delay will throw */ }
+
+
+                   // ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count, "End of Loop - StopWatch.ElaspedTime =" + stopwatch.Elapsed);
+
                 }
             }
             catch (Exception e)
@@ -104,6 +126,11 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
                 ObservableEventCount.OnError(e);
                 ScenarioSimulatorEventSource.Log.DeviceUnexpectedFailure(e, _deviceId);
                 return;
+            }
+
+            using (StreamWriter outfile = new StreamWriter(@"c:\users\lbrader\appdata\data.txt"))
+            {
+                outfile.Write(sb.ToString());
             }
 
             ObservableEventCount.OnCompleted();

@@ -31,7 +31,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
             return evt.GetType().Name;
         }
 
-        public async Task<bool> SendAsync(object evt, string deviceId, int count)
+        public async Task<bool> SendAsync(object evt)
         {
             try
             {
@@ -43,8 +43,6 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
 
                     await this._eventHubClient.SendAsync(eventData);
                     stopwatch.Stop();
-
-                    ScenarioSimulatorEventSource.Log.EventSent(stopwatch.ElapsedTicks, deviceId, count);
 
                     return true;
                 }

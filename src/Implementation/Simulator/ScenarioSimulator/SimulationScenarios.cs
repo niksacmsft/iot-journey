@@ -27,11 +27,14 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
                         x => (EventGenerator)x.CreateDelegate(typeof(EventGenerator)));
         }
 
+
+
+        //DEBUG set jitter to 0
         public static EventEntry[] NoErrorsExpected()
         {
             return new[]
                        {
-                           new EventEntry(EventFactory.TemperatureEventFactory, TimeSpan.FromSeconds(1), 0.1) 
+                           new EventEntry(EventFactory.TemperatureEventFactory, TimeSpan.FromSeconds(1), 0) 
                        };
         }
 
