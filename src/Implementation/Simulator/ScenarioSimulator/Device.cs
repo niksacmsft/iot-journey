@@ -82,6 +82,8 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
                         var evt = entry.CreateNewEvent(this);
                         var wasEventSent = await _sendEventAsync(evt);
 
+                        
+
                         if (wasEventSent)
                         {
                             ObservableEventCount.OnNext(1);
@@ -109,12 +111,12 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
                         }
                     }
 
-                    //try
-                    //{
-                    //    //ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count, "awaiting Delay with LoopFreq = " + LoopFrequency);
-                    //    await Task.Delay(LoopFrequency, token);
-                    //}
-                    //catch (TaskCanceledException) { /* cancelling Task.Delay will throw */ }
+                    try
+                    {
+                        //ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count, "awaiting Delay with LoopFreq = " + LoopFrequency);
+                        await Task.Yield();//Task.Delay(LoopFrequency, token);
+                    }
+                    catch (TaskCanceledException) { /* cancelling Task.Delay will throw */ }
 
 
                    // ScenarioSimulatorEventSource.Log.Logging(_deviceId, event_count, "End of Loop - StopWatch.ElaspedTime =" + stopwatch.Elapsed);
