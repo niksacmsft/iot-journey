@@ -44,7 +44,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
         {
             var stopwatch = Stopwatch.StartNew();
 
-            ScenarioSimulatorEventSource.Log.DeviceStarting(_deviceId);
+//            ScenarioSimulatorEventSource.Log.DeviceStarting(_deviceId);
 
             try
             {

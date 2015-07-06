@@ -29,6 +29,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator.ConsoleHost
               ScenarioSimulatorEventSource.Log, EventLevel.Informational);
 
             observableEventListener.LogToConsole();
+            observableEventListener.LogToFlatFile("console-iot.log");
 
             var configuration = SimulatorConfiguration.GetCurrentConfiguration();
 
