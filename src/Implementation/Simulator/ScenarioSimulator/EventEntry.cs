@@ -44,7 +44,8 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
 
         public void ResetElapsedTime()
         {
-            _totalElapsedMilliseconds = 0;
+            var remainder = _totalElapsedMilliseconds - _frequencyWithJitter;
+            _totalElapsedMilliseconds = remainder;
 
             var nextJitter = (_random.NextDouble() * 2 * _jitter) - _jitter;
             _frequencyWithJitter = _frequency + (nextJitter * _frequency);
