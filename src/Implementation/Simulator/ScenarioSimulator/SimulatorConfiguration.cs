@@ -37,7 +37,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
                 EventHubSasKeyName = ConfigurationHelper.GetConfigValue<string>("Simulator.EventHubSasKeyName"),
                 EventHubPrimaryKey = ConfigurationHelper.GetConfigValue<string>("Simulator.EventHubPrimaryKey"),
                 EventHubTokenLifetimeDays = ConfigurationHelper.GetConfigValue<int>("Simulator.EventHubTokenLifetimeDays", 7),
-                WarmupDuration = ConfigurationHelper.GetConfigValue("Simulator.WarmupDuration", TimeSpan.FromSeconds(30)),
+                WarmupDuration = ConfigurationHelper.GetConfigValue("Simulator.WarmupDuration", TimeSpan.FromSeconds(1)),
                 EventLevel = ConfigurationHelper.GetConfigValue<EventLevel>("Simulator.LogLevel", EventLevel.Informational)
             };
         }

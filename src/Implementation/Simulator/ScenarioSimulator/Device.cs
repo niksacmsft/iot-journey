@@ -90,7 +90,8 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator
 
                     try
                     {
-                        await Task.Delay(LoopFrequency, token);
+                        //await Task.Delay(LoopFrequency, token);
+                        await Task.Yield();
                     }
                     catch (TaskCanceledException) { /* cancelling Task.Delay will throw */ }
                 }

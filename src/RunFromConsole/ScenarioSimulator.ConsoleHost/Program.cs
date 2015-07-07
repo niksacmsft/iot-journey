@@ -34,6 +34,7 @@ namespace Microsoft.Practices.IoTJourney.ScenarioSimulator.ConsoleHost
             observableEventListener.EnableEvents(ScenarioSimulatorEventSource.Log, configuration.EventLevel);
 
             observableEventListener.LogToConsole();
+            observableEventListener.LogToFlatFile("analysis-iot.log");
 
             _deviceSimulator = new SimulationProfile("Console", configuration);
 
